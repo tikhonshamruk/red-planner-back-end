@@ -9,4 +9,5 @@ export class AuthController {
     getHello(): string {
       return this.authService.getHello();
     }
+    
 }
