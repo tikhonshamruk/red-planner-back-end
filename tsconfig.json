@@ -17,5 +17,11 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": [
+    "src/**/*",        // Включаем все файлы в папке src
+    "eslint.config.mjs" // Часто полезно включить и сам конфиг
+  ],
+  "exclude": ["node_modules", "dist"]
+
 }
