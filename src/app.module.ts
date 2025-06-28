@@ -7,3 +7,4 @@ import { ConfigModule } from '@nestjs/config'
 	imports: [ConfigModule.forRoot(), AuthModule, UserModule]
 })
 export class AppModule {}
+ 
