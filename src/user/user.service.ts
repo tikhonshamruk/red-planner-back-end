@@ -3,6 +3,7 @@ import { hash } from 'argon2'
 import { AuthDto } from 'src/auth/dto/auth.dto'
 import { PrismaService } from 'src/prisma.service'
 import { startOfDay, subDays } from 'date-fns'
+import { UpdateUserDto } from './dto/update-user.dto'
 
 
 @Injectable()
@@ -37,6 +38,13 @@ export class UserService {
 
 		return this.prisma.user.create({
 			data: user
+		})
+	}
+
+	async update(dto: UpdateUserDto, id: string){
+		return this.prisma.user.update({
+			where: {id },
+			data: dto
 		})
 	}
 
@@ -85,7 +93,5 @@ export class UserService {
 		}
 	}
 
-	// async update(id: string, dto: UpdateUserDto){
-
-	// }
+	
 }
