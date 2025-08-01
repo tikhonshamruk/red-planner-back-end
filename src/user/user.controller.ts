@@ -24,8 +24,8 @@ export class UserController {
     @Put()
     @UseGuards(JwtAuthGuard)
        async update(@Body() dto : UpdateUserDto,@CurrentUser('id') id : string ){
-         await this.userService.update(dto, id)
-       
+         const user = await this.userService.update(dto, id)
+         return user
       }
  
 }

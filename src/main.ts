@@ -6,11 +6,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api')
   app.enableCors({
-    origin: ['https://ankiweb.net'],
+    origin: ['http://localhost:3001'],
     credentials: true, 
-    exposedHeaders: 'set-cookie'
+    // exposedHeaders: 'set-cookie'
   })
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(3000);
 }
 bootstrap();

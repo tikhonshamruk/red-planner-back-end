@@ -12,7 +12,7 @@ export class AuthController {
   @Post('login')
      async login(@Body() dto: AuthDto, @Res({passthrough: true}) res:Response){
       const {refreshToken, ...response} = await this.authService.login(dto)
-      this.authService.addRefreshTokenToResponse(res, refreshToken)
+      this.authService.addRefreshTokenToResponse(res, refreshToken) //добавлям refrehsToken в cookie
       return response
     }
     
