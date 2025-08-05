@@ -22,7 +22,7 @@ model User{
   name String?
   password String
 
-  workInternal Int? @default(50)
+  workInterval Int? @default(50)
   breakInterval Int? @default(10)
   intervalsCount Int? @default(7)
 

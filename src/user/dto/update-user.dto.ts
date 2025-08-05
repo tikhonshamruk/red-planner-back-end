@@ -24,7 +24,7 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsInt()
 	@Min(1)
-	workInternal?: number
+	workInterval?: number
 
 	@IsOptional()
 	@IsInt()
