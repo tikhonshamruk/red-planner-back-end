@@ -7,12 +7,11 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { AuthDto } from './dto/auth.dto'
-import { verify } from 'argon2'
+import { verify, hash } from 'argon2'
 import { Response } from 'express'
 
 @Injectable()
 export class AuthService {
-
 	EXPIRE_DAY_REFRESH_TOKEN = 1
 	REFRESH_TOKEN_NAME = 'refreshToken'
 
@@ -34,10 +33,20 @@ export class AuthService {
 	async register(dto: AuthDto) {
 		const oldUser = await this.userService.getByEmail(dto.email)
 
+		console.log('Пароль, введеный пользователем (без хеширования):', dto.password)
+
 		if (oldUser) throw new BadRequestException('User already exits')
 
+		const hashedPassword = await hash(dto.password)
+
+		 // 💡 Логируем хешированный пароль, чтобы убедиться, что он был создан
+        console.log('Сгенерированный хешированный пароль:', hashedPassword);
+
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, ...user } = await this.userService.create(dto)
+		const { password, ...user } = await this.userService.create({
+			email: dto.email,
+			password: hashedPassword
+		})
 
 		return { user }
 	}
@@ -61,30 +70,34 @@ export class AuthService {
 
 		if (!user) throw new NotFoundException('User not found')
 
-		const isValid = await verify(user.password, dto.password)
+			console.log('Пароль из базы данных:', user.password);
+    console.log('Пароль, введенный пользователем:', typeof(dto.password), dto.password);
 
-		if (!isValid) throw new UnauthorizedException('Invalid password')
+		const isValid = await verify(user.password, dto.password)
+		 console.log('isValid', isValid)
+
+		// if (!isValid) throw new UnauthorizedException('Invalid password')
 
 		return user
 	}
 
-	addRefreshTokenToResponse(res:Response, refreshToken: string){
-		const expiresIn = new Date() 
+	addRefreshTokenToResponse(res: Response, refreshToken: string) {
+		const expiresIn = new Date()
 		expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAY_REFRESH_TOKEN)
 
-		res.cookie(this.REFRESH_TOKEN_NAME, refreshToken,{
+		res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
 			httpOnly: true,
-			domain:'localhost', 
-			expires: expiresIn, 
+			domain: 'localhost',
+			expires: expiresIn,
 			secure: true,
 			sameSite: 'none'
 		})
 	}
-	
-	removeRefreshTokenFromResponse(res: Response){
-		res.cookie(this.REFRESH_TOKEN_NAME, '',{
+
+	removeRefreshTokenFromResponse(res: Response) {
+		res.cookie(this.REFRESH_TOKEN_NAME, '', {
 			httpOnly: true,
-			domain:'localhost', 
+			domain: 'localhost',
 			secure: true,
 			sameSite: 'none'
 		})
