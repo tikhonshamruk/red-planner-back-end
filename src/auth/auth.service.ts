@@ -37,16 +37,8 @@ export class AuthService {
 
 		if (oldUser) throw new BadRequestException('User already exits')
 
-		const hashedPassword = await hash(dto.password)
-
-		 // 💡 Логируем хешированный пароль, чтобы убедиться, что он был создан
-        console.log('Сгенерированный хешированный пароль:', hashedPassword);
-
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, ...user } = await this.userService.create({
-			email: dto.email,
-			password: hashedPassword
-		})
+		const { password, ...user } = await this.userService.create(dto)
 
 		return { user }
 	}
@@ -70,13 +62,12 @@ export class AuthService {
 
 		if (!user) throw new NotFoundException('User not found')
 
-			console.log('Пароль из базы данных:', user.password);
-    console.log('Пароль, введенный пользователем:', typeof(dto.password), dto.password);
-
+	console.log('Пароль из базы данных:', user.password);
+	const hashLogin = await hash(dto.password)
+	console.log('hasLogin', hashLogin)
 		const isValid = await verify(user.password, dto.password)
-		 console.log('isValid', isValid)
 
-		// if (!isValid) throw new UnauthorizedException('Invalid password')
+		if (!isValid) throw new UnauthorizedException('Invalid password')
 
 		return user
 	}
