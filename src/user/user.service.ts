@@ -29,11 +29,11 @@ export class UserService {
 		})
 	}
 
-	async create(dto: AuthDto){
+	async create(dto: AuthDto, hash:string){
 		const user= {
 			email: dto.email,
 			name: '',
-			password: await hash(dto.password)
+			password: hash
 		}
 
 		return this.prisma.user.create({
